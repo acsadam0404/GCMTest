@@ -20,7 +20,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.util.StringUtils;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
-import org.testng.annotations.Test;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
@@ -44,8 +43,8 @@ public class SmackCcsClient {
 
 	private static final Logger logger = Logger.getLogger("SmackCcsClient");
 
-	private static final String GCM_SERVER = "gcm.googleapis.com";
-	private static final int GCM_PORT = 5235;
+	private static final String GCM_SERVER = "gcm-preprod.googleapis.com";
+	private static final int GCM_PORT = 5236;
 
 	private static final String GCM_ELEMENT_NAME = "gcm";
 	private static final String GCM_NAMESPACE = "google:mobile:data";
@@ -400,7 +399,7 @@ public class SmackCcsClient {
 		ccsClient.connect(senderId, password);
 
 		// Send a sample hello downstream message to a device.
-		String toRegId = "APA91bEm3I_PQ34f2sLU5LmQ4hm9t_vZb98JXLSR0lijcyxvWFnaN_jDGvPiWYpX2ISVHtuy4ECjZ90mKD9dlwlpcORCdNqpv_7qqLzK2XtZ0b4nwK2vfhmNJwjBYWeS7xrO96HQfSkDl2HemYSIwuNDiWqu5JS_ow";
+		String toRegId = "APA91bEtQUOOVM9YQ5JvlQ8CIBv7pnmy9aGDgk-pQ3hTbF1SeocHInDFXVneg23LxShrfR5Wct_groxqcsN5Mvmy-uJV6XsOt50e6XJdpj2P8yFEmidtz7Qyzx3WEbHpB5geax1E-rEGSJEdVefuaG0MyycTBDJtrQ";
 		String messageId = ccsClient.nextMessageId();
 		Map<String, String> payload = new HashMap<String, String>();
 		payload.put("Hello", "World");
