@@ -58,6 +58,42 @@ public class DemoActivity extends Activity {
                 registerInBackground();
             }
         });
+        Button sendButton = (Button) findViewById(R.id.send);
+        Button clearButton = (Button) findViewById(R.id.clear);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new AsyncTask<Void, String, String>() {
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        String msg = "";
+                        try {
+                            Bundle data = new Bundle();
+                            data.putString("my_message", "Hello World");
+                            data.putString("my_action","com.google.android.gcm.demo.app.ECHO_NOW");
+                            String id = Integer.toString(msgId.incrementAndGet());
+                            gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+                            msg = "Sent message";
+                        } catch (IOException ex) {
+                            msg = "Error :" + ex.getMessage();
+                        }
+                        return msg;
+                    }
+
+                    @Override
+                    protected void onPostExecute(String msg) {
+                        display.append(msg + "\n");
+                    }
+                }.execute(null, null, null);
+            }
+        });
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                display.setText("");
+            }
+        });
 
         context = getApplicationContext();
 
@@ -228,35 +264,6 @@ public class DemoActivity extends Activity {
     private void sendRegistrationIdToBackend() {
         // Your implementation here.
         Log.i(TAG, regid);
-    }
-
-    public void onClick(final View view) {
-        if (view == findViewById(R.id.send)) {
-            new AsyncTask<Void, String, String>() {
-                @Override
-                protected String doInBackground(Void... params) {
-                    String msg = "";
-                    try {
-                        Bundle data = new Bundle();
-                        data.putString("my_message", "Hello World");
-                        data.putString("my_action","com.google.android.gcm.demo.app.ECHO_NOW");
-                        String id = Integer.toString(msgId.incrementAndGet());
-                        gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-                        msg = "Sent message";
-                    } catch (IOException ex) {
-                        msg = "Error :" + ex.getMessage();
-                    }
-                    return msg;
-                }
-
-                @Override
-                protected void onPostExecute(String msg) {
-                    display.append(msg + "\n");
-                }
-            }.execute(null, null, null);
-        } else if (view == findViewById(R.id.clear)) {
-            display.setText("");
-        }
     }
 
 }

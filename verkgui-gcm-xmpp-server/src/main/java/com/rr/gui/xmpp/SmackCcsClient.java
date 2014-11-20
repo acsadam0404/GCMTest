@@ -238,7 +238,7 @@ public class SmackCcsClient {
 		config.setSecurityMode(SecurityMode.enabled);
 		config.setReconnectionAllowed(true);
 		config.setRosterLoadedAtLogin(false);
-		config.setSendPresence(false);
+		config.setSendPresence(true);
 		config.setSocketFactory(SSLSocketFactory.getDefault());
 
 		connection = new XMPPTCPConnection(config);
@@ -390,25 +390,47 @@ public class SmackCcsClient {
 	}
 
 
-	public static void main(String... args) throws XMPPException, IOException, SmackException {
+	public static void main(String... args) throws XMPPException, IOException, SmackException, InterruptedException {
 		final long senderId = 214725490112l; // your GCM sender id
 		final String password = "AIzaSyB4684uUa1REsI_UY5KyrVmVacxP7fphPA";
+		new Thread() {
+			public void run() {
+				try {
+				SmackCcsClient ccsClient = new SmackCcsClient();
 
-		SmackCcsClient ccsClient = new SmackCcsClient();
+				ccsClient.connect(senderId, password);
 
-		ccsClient.connect(senderId, password);
+				// Send a sample hello downstream message to a device.
+				String toRegId = "APA91bEtQUOOVM9YQ5JvlQ8CIBv7pnmy9aGDgk-pQ3hTbF1SeocHInDFXVneg23LxShrfR5Wct_groxqcsN5Mvmy-uJV6XsOt50e6XJdpj2P8yFEmidtz7Qyzx3WEbHpB5geax1E-rEGSJEdVefuaG0MyycTBDJtrQ";
+				String messageId = ccsClient.nextMessageId();
+				Map<String, String> payload = new HashMap<String, String>();
+				payload.put("Hello", "fakyouh");
+				payload.put("CCS", "Dummy asdasd");
+				payload.put("EmbeddedMessageId", messageId);
+				String collapseKey = UUID.randomUUID().toString();
+				Long timeToLive = 10000L;
+				String message = SmackCcsClient.createJsonMessage(toRegId, messageId, payload, collapseKey, timeToLive, true);
 
-		// Send a sample hello downstream message to a device.
-		String toRegId = "APA91bEtQUOOVM9YQ5JvlQ8CIBv7pnmy9aGDgk-pQ3hTbF1SeocHInDFXVneg23LxShrfR5Wct_groxqcsN5Mvmy-uJV6XsOt50e6XJdpj2P8yFEmidtz7Qyzx3WEbHpB5geax1E-rEGSJEdVefuaG0MyycTBDJtrQ";
-		String messageId = ccsClient.nextMessageId();
-		Map<String, String> payload = new HashMap<String, String>();
-		payload.put("Hello", "World");
-		payload.put("CCS", "Dummy Message");
-		payload.put("EmbeddedMessageId", messageId);
-		String collapseKey = "sample";
-		Long timeToLive = 10000L;
-		String message = SmackCcsClient.createJsonMessage(toRegId, messageId, payload, collapseKey, timeToLive, true);
-
-		ccsClient.sendDownstreamMessage(message);
+					ccsClient.sendDownstreamMessage(message);
+				} catch (NotConnectedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (XMPPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SmackException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			};
+		}.start();
+		
+		while(true) {
+			Thread.sleep(5000);
+		}
+		
 	}
 }

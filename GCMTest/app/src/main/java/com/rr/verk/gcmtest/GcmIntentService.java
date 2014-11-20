@@ -70,15 +70,30 @@ public class GcmIntentService extends IntentService {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, DemoActivity.class), 0);
 
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setContentTitle("GCM Notification")
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
-                        .setContentText(msg);
+                        .setContentText(msg).addAction(R.drawable.ic_launcher, "backtoact", contentIntent);
 
         mBuilder.setContentIntent(contentIntent);
+
+        NotificationCompat.InboxStyle inboxStyle =
+                new NotificationCompat.InboxStyle();
+        String[] events = new String[] {"asd", "dfigojdfoig", "dfgdfign", "écbvéccécécécé" };
+// Sets a title for the Inbox in expanded layout
+        inboxStyle.setBigContentTitle("Event tracker details:");
+
+// Moves events into the expanded layout
+        for (int i=0; i < events.length; i++) {
+
+            inboxStyle.addLine(events[i]);
+        }
+// Moves the expanded layout object into the notification object.
+        mBuilder.setStyle(inboxStyle);
         mNotificationManager.notify(100 + new Random().nextInt(10000), mBuilder.build());
     }
 }
